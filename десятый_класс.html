@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 класс - Physics PRO</title>
+    <link rel="stylesheet" href="оформление.css">
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+    <style>
+        /* Дополнительный стиль для заголовков разделов */
+        .section-title {
+            text-align: center;
+            margin: 50px 0 30px;
+            padding: 10px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+    </style>
+</head>
+<body class="class-10-page">
+
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙</button>
+
+    <header>
+        <h1>10 класс</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">На главную</a>
+        <a href="седьмой_класс.html">7 класс</a>
+	<a href="восьмой_класс.html">8 класс</a>
+	<a href="девятый_класс.html">9 класс</a>
+	<a href="одиннадцатый_класс.html">11 класс</a>
+    </nav>
+
+    <div class="container">
+        <div class="search-container">
+            <div class="search-wrapper">
+                <input type="text" id="formulaSearch" placeholder="Поиск по темам 10 класса..." autocomplete="off">
+                <button id="clearSearch" class="clear-search" title="Очистить">&times;</button>
+            </div>
+            <ul id="searchSuggestions" class="suggestions-list"></ul>
+        </div>
+
+        
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Справочник Physics PRO.</p>
+    </footer>
+
+    <script>
+        // ТЕМА
+        const themeBtn = document.getElementById('themeBtn');
+        function updateBtnIcon() {
+            themeBtn.innerText = document.documentElement.hasAttribute('data-theme') ? '☀️' : '🌙';
+        }
+        updateBtnIcon();
+        function toggleTheme() {
+            if (document.documentElement.hasAttribute('data-theme')) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateBtnIcon();
+        }
+
+        // КАЛЬКУЛЯТОРЫ
+        
+
+        // ПОИСК И КРЕСТИК
+        const searchInput = document.getElementById('formulaSearch');
+        const clearBtn = document.getElementById('clearSearch');
+        const suggList = document.getElementById('searchSuggestions');
+        const cards = document.querySelectorAll('details');
+        const titles = document.querySelectorAll('.section-title');
+
+        searchInput.addEventListener('input', function() {
+            const val = this.value.toLowerCase().trim();
+            clearBtn.style.display = val.length > 0 ? 'block' : 'none';
+            suggList.innerHTML = '';
+            
+            if (val.length < 1) {
+                suggList.style.display = 'none';
+                cards.forEach(c => c.style.display = 'block');
+                titles.forEach(t => t.style.display = 'block'); // Показываем заголовки разделов
+                return;
+            }
+
+            titles.forEach(t => t.style.display = 'none'); // Скрываем заголовки при поиске
+            
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(val)) {
+                    const li = document.createElement('li');
+                    li.innerText = card.querySelector('summary').innerText;
+                    li.onclick = () => {
+                        searchInput.value = li.innerText;
+                        suggList.style.display = 'none';
+                        cards.forEach(c => c.style.display = 'none');
+                        card.style.display = 'block';
+                        card.setAttribute('open', 'true');
+                    };
+                    suggList.appendChild(li);
+                }
+            });
+            suggList.style.display = suggList.children.length > 0 ? 'block' : 'none';
+        });
+
+        clearBtn.onclick = () => {
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            suggList.style.display = 'none';
+            cards.forEach(c => c.style.display = 'block');
+            titles.forEach(t => t.style.display = 'block');
+            searchInput.focus();
+        };
+
+        // Обработка перехода с главной
+        const urlParams = new URLSearchParams(window.location.search);
+        const findParam = urlParams.get('find');
+        if (findParam) {
+            const target = findParam.toLowerCase();
+            titles.forEach(t => t.style.display = 'none');
+            cards.forEach(card => {
+                if (card.getAttribute('data-name') === target) {
+                    cards.forEach(c => c.style.display = 'none');
+                    card.style.display = 'block';
+                    card.setAttribute('open', 'true');
+                    searchInput.value = findParam;
+                    clearBtn.style.display = 'block';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
